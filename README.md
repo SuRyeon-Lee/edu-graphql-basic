@@ -27,10 +27,6 @@
 * 그래서 우리는 그 설명서를 읽고, 그 설명서를 다룰 수 있는 코드를 짜는것이다.
 * GraphQl은 그 관념을 설명서로 나타낸 것이고, 그걸 어떤 언어로든 적용시키면 되는 것이라서, 어떤 언어에서도 사용할 수 있다.
 * 페이스북이 2012년부터 만들어서 사용하고, 2015년부터 오픈됨
-
-<br/><br/>
-
-## GraphQl api
 * GraphQl은 rest api에 대한 직접적인 해결책이다.
 * GraphQl이 해결한 rest api의 문제: over-fetching, under-fetching
 * [Swapi GraphQl](https://graphql.org/swapi-graphql)은 GraphQl 요청을 쓰고 데이터를 받아오는 연습을 해볼 수 있다.
