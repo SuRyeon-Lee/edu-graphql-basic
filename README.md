@@ -30,11 +30,13 @@
 * GraphQl은 rest api에 대한 직접적인 해결책이다.
 * GraphQl이 해결한 rest api의 문제: over-fetching, under-fetching
 * [Swapi GraphQl](https://graphql.org/swapi-graphql)은 GraphQl 요청을 쓰고 데이터를 받아오는 연습을 해볼 수 있다.
+
 <br/><br/>
 
 ## Apollo server
 * 오픈소스 spec-compliant GraphQL server이다. (다시말해, Apollo server는 node.js server 같은건데 graphQl을 이해하는 서버이다.)
 * 다른 종류로 만들어진 백엔드위에 아폴로 서버를 올릴 수도있다. (express로 만들어진 rest api을 graphQl api로 바꾸기 위해서 server를 많이 수정하지 않고 미들웨어만 넣어주면 된다.)
+
 <br/><br/>
 
 ## tweetql 실습
