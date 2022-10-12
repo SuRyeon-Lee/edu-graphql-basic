@@ -37,7 +37,43 @@
 
 
 ## tweetql 실습
+### 환경세팅
 ``` bash
 npm i apollo-server graphql
 npm i nodemon -D
 ```
+* rest api가 많은 url들의 집합이듯, graphQl api는 많은 type들의 집합이다.
+<br/>
+
+### 대충 서버 시작하기
+```js
+import { ApolloServer, gql } from "apollo-server";
+
+const typeDefs = gql`
+  # ✏️ schema definition language 작성
+  type Query {
+    text: String
+    hello: String
+  }
+`
+
+const server = new ApolloServer({ typeDefs });
+
+server.listen().then(({ url }) => {
+  console.log(`🚀 Server ready at ${url}`);
+})
+```
+* SDL(schema definition language)를 활용하여 스키마로 데이터에 뭐가 어떻게 들어갈 건지 정해줘야 한다.
+* SDL의 최상위엔 📌 `type: Query`을 꼭 만들어줘야 한다. 필수!
+* 유저가 request할 수 있도록 만들 모든 것들은  `type Query{ }` 안에 있어야 한다.
+* `listen({port:4001})` 이런식으로 port번호를 지정할 수도 있다. (지정하지 않으면 그냥 4000번으로 켜진다.)
+* then으로 url과 server 인스턴스 두가지르 받을 수 있다.
+* `listen()` 은 apollo-server 패키지를 위한 메소드 이며, apollo-server-express와 같은 다른 패키지를 사용하면 Node.js 미들웨어로 바꿔야 한다고 한다. 그런것들에 `start`나 `framework-specific middleware function`이 있다고...
+* 위의 설명은 모두 [공식문서](https://www.apollographql.com/docs/apollo-server/v3/api/apollo-server/#url)에 나온다.
+
+
+### 유의미한 스키마 만들기
+* 오픈한 graphQl server를 브라우저에 치면 graphQl이 제공하는 랜딩화면이 등장한다.
+* 랜딩화면에서 'Query your server' 버튼을 누르면 지금 열린 서버를 listen하고 있는 Explorer 페이지가 보인다. vscode에서 짠 서버 코드를 ui에서 편하게 실험해볼 수 있다.👍🏻
+* typeDefs에서 정의하는 type의 종류에는 scalar type, non-scalar type, root type 등 이 있다. 자세한 내용은 [링크](https://www.apollographql.com/docs/federation/v1/value-types/)참조
+* **scalar type**은 graphQl에 내장되어 있는 타입이다. 예를 들어 *String, int, boolean, ID* 등이 있다.
