@@ -20,6 +20,12 @@ const typeDefs = gql`
     # 하나의 트윗만 받기위한 필드 tweet을 만들땐, 어떤 유저의 Tweet을 받을지를 argument로 정의해야한다.
     tweet(id:ID): Tweet
   }
+  #user가 rest api의 post,delete,create,patch와 같이 데이터를 변경하는 요청을 보낼 수 있도록 하는 경우
+  #모든 변화가 일어나는 작업(get을 제외한 다른 작업)들은 mutaion에 넣어야한다.
+  type Mutation {
+    postTweet(text:String, userId: ID): Tweet
+    deleteTweet(id:ID): Boolean
+  }
 `
 
 const server = new ApolloServer({ typeDefs });

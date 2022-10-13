@@ -74,6 +74,8 @@ server.listen().then(({ url }) => {
 * `listen({port:4001})` 이런식으로 port번호를 지정할 수도 있다. (지정하지 않으면 그냥 4000번으로 켜진다.)
 * then으로 url과 server 인스턴스 두가지르 받을 수 있다.
 * `listen()` 은 apollo-server 패키지를 위한 메소드 이며, apollo-server-express와 같은 다른 패키지를 사용하면 Node.js 미들웨어로 바꿔야 한다고 한다. 그런것들에 `start`나 `framework-specific middleware function`이 있다고...
+* `type Query{ }` 안에 넣는 작업이 rest api에선 Get url과 같다.
+* `type Mutation{ }` 안에 넣는 작업이 rest api에선 Get이외의 메소드들과 같다.
 * 위의 설명은 모두 [공식문서](https://www.apollographql.com/docs/apollo-server/v3/api/apollo-server/#url)에 나온다.
 <br/>
 
@@ -82,3 +84,33 @@ server.listen().then(({ url }) => {
 * 랜딩화면에서 'Query your server' 버튼을 누르면 지금 열린 서버를 listen하고 있는 Explorer 페이지가 보인다. vscode에서 짠 서버 코드를 ui에서 편하게 실험해볼 수 있다.👍🏻
 * typeDefs에서 정의하는 type의 종류에는 scalar type, non-scalar type, root type 등 이 있다. 자세한 내용은 [링크](https://www.apollographql.com/docs/federation/v1/value-types/)참조
 * **scalar type**은 graphQl에 내장되어 있는 타입이다. 예를 들어 *String, int, boolean, ID* 등이 있다.
+* `type Query{ }`로 get요청을 보낼때는 아래와 같이 맨 앞에 query를 생략해도 된다.
+```js
+//get 요청보내기
+
+query {
+   allTweets{
+     id
+     text
+  }
+}
+
+// 위는 아래와 동일하다.
+
+{
+   allTweets{
+     id
+     text
+  }
+}
+```
+* 🛑 `type Mutation{ }`으로 get이외의 요청을 보낼때는 꼭! mutation 키워드를 적어야 한다.
+```js
+//get 이외의 요청보내기
+mutation{
+  postTweet(text:"Hello! first Tweet!",userId: "1") {
+    text
+  }
+}
+
+```
