@@ -84,6 +84,41 @@ server.listen().then(({ url }) => {
 * 랜딩화면에서 'Query your server' 버튼을 누르면 지금 열린 서버를 listen하고 있는 Explorer 페이지가 보인다. vscode에서 짠 서버 코드를 ui에서 편하게 실험해볼 수 있다.👍🏻
 * typeDefs에서 정의하는 type의 종류에는 scalar type, non-scalar type, root type 등 이 있다. 자세한 내용은 [링크](https://www.apollographql.com/docs/federation/v1/value-types/)참조
 * **scalar type**은 graphQl에 내장되어 있는 타입이다. 예를 들어 *String, int, boolean, ID* 등이 있다.
+* value에 !를 붙이지 않으면 해당 필드는 nullable field가 된다.
+* !는 graphql에서 어떤것이 required고, 어떤것이 아닌지 구분하는 기준이된다.
+```js
+const typeDefs = gql`
+  # 중략...
+  type Query {
+    tweet(id:ID): Tweet
+    #id는 ID||null이다. 만약 ID 값을 required 처리를 하고 싶다면...
+    #tweet(id:ID!)이렇게 처리를 해줘야한다.
+    #🛑이렇게하면 gql에게 만약 tweet 쿼리를 이용하고 싶다면, 반드시 ID를 argument를 보내야한다고 말하는 거과 같다.
+  }
+`
+// 이렇게 설정해 놓으면 explorer에서 아래의 오퍼레이션을 돌릴시..
+{
+  tweet(id: "1") {
+    text
+  }
+}
+//아래와 같은 결과값이 나온다.
+{
+  "data": {
+    "tweet": null //null이 돌아오고 있다.
+    //nullable field의 응답 value는 data||null 이다.
+    //해당 필드가 boolean을 응답하면 value는 boolean||null이 될 것이다.
+  }
+}
+```
+```js
+//반환값이 null이 아님을 보장하기 위해 아래와 같이 바꾼다.
+  type Query {
+    tweet(id:ID!): Tweet
+  }
+  //1. tweet 쿼리로 tweet을 받아올때 반드시 id를 보내야한다. (그렇지 않음 null 반환이아니라 에러가 난다.)
+  //2. tweet 쿼리로 id를 전달할때, 해당 아이디에 맞는 Tweet이 없다면 null을 받고, 있다면 그 Tweet을 받는다.
+```
 <br>
 
 #### 📮요청보내보기(explorer로 실습)
