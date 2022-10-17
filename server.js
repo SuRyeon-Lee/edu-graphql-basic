@@ -22,6 +22,7 @@ const typeDefs = gql`
     #[Tweet,null,Tweet]❌ [Tweet,Tweet,Tweet]⭕️ []⭕️ 빈배열은 null은 아니기 떄문에 가능
     # 하나의 트윗만 받기위한 필드 tweet을 만들땐, 어떤 유저의 Tweet을 받을지를 argument로 정의해야한다.
     tweet(id:ID!): Tweet #🔥꼭 argument를 넘겨줘야하며 해당하는게 없을시 null을 받을 수 있다.
+    ping: String!
   }
   #user가 rest api의 post,delete,create,patch와 같이 데이터를 변경하는 요청을 보낼 수 있도록 하는 경우
   #모든 변화가 일어나는 작업(get을 제외한 다른 작업)들은 mutaion에 넣어야한다.
@@ -31,7 +32,30 @@ const typeDefs = gql`
   }
 `
 
-const server = new ApolloServer({ typeDefs });
+/* 
+🛑 위에서 정의한 typeDefs는 어떤 언어에서 통용되지만, 
+앞으로 정의할 resolver는 언어마다 다르게 구현된다.
+
+-⭐️ resolvers에 정의된 쿼리 타입과 필드등은 반드시 typeDefs에 정의된 대로 동일하게 해야한다.
+
+-Apollo가 query의 tweet을 요청하는 것을 본다면 Apllo가 resolvers의 query로 갈거고, 
+해당하는 resolvers 필드의 함수를 실행시킬 것이다. 
+
+-⭐️ 한마디로 resolvers는 누군가 field를 요청했을 때 실제로 호출될 함수를 정의한다.
+*/
+const resolvers = {
+  Query: {
+    tweet(){
+      console.log("I'm called")
+      return null; //여기서 리턴하는 값은 typeDefs에서 리턴하는 것과 같다.
+    },
+    ping(){
+      return 'pong' //typedefs에서 정의했던 ping 필드를 요청하면 reslover에서 'pong'을 내준다.
+    }
+  }
+}
+
+const server = new ApolloServer({ typeDefs, resolvers });
 
 server.listen().then(({ url }) => {
   console.log(`🚀 Server ready at ${url}`);
