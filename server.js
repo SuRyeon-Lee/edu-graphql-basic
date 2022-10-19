@@ -1,5 +1,16 @@
 import { ApolloServer, gql } from "apollo-server";
 
+const tweets = [
+  {
+    id: "1",
+    text: "first one!",
+  },
+  {
+    id: "2",
+    text: "second one!",
+  },
+]
+
 const typeDefs = gql`
   # ✏️ schema definition language 작성
   type User {
@@ -22,7 +33,6 @@ const typeDefs = gql`
     #[Tweet,null,Tweet]❌ [Tweet,Tweet,Tweet]⭕️ []⭕️ 빈배열은 null은 아니기 떄문에 가능
     # 하나의 트윗만 받기위한 필드 tweet을 만들땐, 어떤 유저의 Tweet을 받을지를 argument로 정의해야한다.
     tweet(id:ID!): Tweet #🔥꼭 argument를 넘겨줘야하며 해당하는게 없을시 null을 받을 수 있다.
-    ping: String!
   }
   #user가 rest api의 post,delete,create,patch와 같이 데이터를 변경하는 요청을 보낼 수 있도록 하는 경우
   #모든 변화가 일어나는 작업(get을 제외한 다른 작업)들은 mutaion에 넣어야한다.
@@ -45,12 +55,11 @@ const typeDefs = gql`
 */
 const resolvers = {
   Query: {
-    tweet(){
-      console.log("I'm called")
-      return null; //여기서 리턴하는 값은 typeDefs에서 리턴하는 것과 같다.
+    allTweets() {
+      return tweets;
     },
-    ping(){
-      return 'pong' //typedefs에서 정의했던 ping 필드를 요청하면 reslover에서 'pong'을 내준다.
+    tweet(root, {id}){ //💡 tweet(root, args)! 유저가 보낸 인자는 항상 resolver의 두번째 인자에 들어온다!
+      return tweets.find(tweet => tweet.id === id);
     }
   }
 }
