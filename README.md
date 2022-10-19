@@ -156,3 +156,40 @@ mutation{
 <br/><br/>
 
 #### 🕊resolver만들기
+* resolvers는 누군가 field를 요청했을 때 실제로 호출될 함수를 정의한다.
+* Apollo가 query의 tweet을 요청하는 것을 본다면 Apllo가 resolvers의 query로 갈거고, 해당하는 resolvers 필드의 함수를 실행시킬 것이다. 
+* 🛑resolvers에 정의된 쿼리 타입과 필드등은 반드시 typeDefs에 정의된 대로 동일하게 해야한다.
+```js
+import { ApolloServer, gql } from "apollo-server";
+
+const typeDefs = gql`
+  type Tweet {
+      id: ID!
+      text: String!
+      author: User!
+  }
+  type Query {
+    tweet(id:ID!): Tweet 
+    ping: String!
+  }
+`
+
+const resolvers = {
+  Query: {
+    tweet(){
+      console.log("I'm called")
+      return null; //여기서 리턴하는 값은 typeDefs에서 리턴하는 것과 같다.
+    },
+    ping(){
+      return 'pong' //typedefs에서 정의했던 ping 필드를 요청하면 reslover에서 'pong'을 내준다.
+    }
+  }
+}
+
+const server = new ApolloServer({ typeDefs, resolvers });
+
+server.listen().then(({ url }) => {
+  console.log(`🚀 Server ready at ${url}`);
+})
+
+```

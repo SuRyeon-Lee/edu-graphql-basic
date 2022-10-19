@@ -11,7 +11,7 @@ const typeDefs = gql`
   type Tweet {
       id: ID!
       text: String!
-      author: User!
+      author: User
   }
   type Query {
     # 이경우에 scalar type(tring, int, boolean, ID)으로 원하는 자료를 줄 수 없다.
