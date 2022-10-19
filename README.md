@@ -159,6 +159,7 @@ mutation{
 * resolvers는 누군가 field를 요청했을 때 실제로 호출될 함수를 정의한다.
 * Apollo가 query의 tweet을 요청하는 것을 본다면 Apllo가 resolvers의 query로 갈거고, 해당하는 resolvers 필드의 함수를 실행시킬 것이다. 
 * 🛑resolvers에 정의된 쿼리 타입과 필드등은 반드시 typeDefs에 정의된 대로 동일하게 해야한다.
+* Query 요청은 Query키값에, Muation 요청은 Mutation 키값에서 처리한다.
 ```js
 import { ApolloServer, gql } from "apollo-server";
 

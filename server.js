@@ -1,6 +1,6 @@
 import { ApolloServer, gql } from "apollo-server";
 
-const tweets = [
+let tweets = [
   {
     id: "1",
     text: "first one!",
@@ -60,6 +60,24 @@ const resolvers = {
     },
     tweet(root, {id}){ //💡 tweet(root, args)! 유저가 보낸 인자는 항상 resolver의 두번째 인자에 들어온다!
       return tweets.find(tweet => tweet.id === id);
+    }
+  },
+  Mutation: {
+    postTweet(_,{text,userId}){
+    //🛑 두번째 인자 args를 사용하기 위해서 반드시 첫번째 인자 root에 뭔가 적어줘야하며,
+    //이렇게 root를 사용하지 않을 경우 그냥 _로 적기도한다.
+      const newTweet = {
+        id:tweets.length + 1,
+        text,
+      };
+      tweets.push(newTweet);
+      return newTweet;
+    },
+    deleteTweet(_, {id}){
+      const tweet = tweets.find(tweet => tweet.id === id);
+      if(!tweet) return false;
+      tweets = tweets.filter(tweet => tweet.id !== id);
+      return true;
     }
   }
 }
