@@ -319,3 +319,89 @@ server.listen().then(({ url }) => {
 })
 `
 ```
+
+</br>
+type resolver 주석 뺸 깔끔버전 추가 🧹
+
+```js
+let users = [
+  {
+    id: "1",
+    firstName: "suryeon",
+    lastName: "lee"
+  },
+  {
+    id: "2",
+    firstName: "Elon",
+    lastName: "Mask"
+  }
+]
+
+const typeDefs = gql`
+  import { ApolloServer, gql } from "apollo-server";
+
+  type User {
+    id: ID!
+    firstName: String!
+    lastName: String!
+    fullName: String! 
+  }
+  type Tweet {
+      id: ID!
+      text: String!
+      author: User
+  }
+  type Query {
+    allTweets: [Tweet!]! 
+    tweet(id:ID!): Tweet 
+    allUsers: [User!]!
+  }
+  type Mutation {
+    postTweet(text:String!, userId: ID!): Tweet!
+    deleteTweet(id:ID!): Boolean!
+  }
+
+  const resolvers = {
+  Query: {
+    allTweets() {
+      return tweets;
+    },
+    tweet(root, {id}){ 
+      return tweets.find(tweet => tweet.id === id);
+    },
+    allUsers() {
+      console.log("all users called!")
+      return users
+    }
+  },
+  Mutation: {
+    postTweet(_,{text,userId}){
+      const newTweet = {
+        id:tweets.length + 1,
+        text,
+      };
+      tweets.push(newTweet);
+      return newTweet;
+    },
+    deleteTweet(_, {id}){
+      const tweet = tweets.find(tweet => tweet.id === id);
+      if(!tweet) return false;
+      tweets = tweets.filter(tweet => tweet.id !== id);
+      return true;
+    }
+  },
+  
+  User: {
+    fullName({firstName, lastName}){ 
+      console.log("fullName called")
+      return `${firstName} ${lastName}`
+    }
+  }
+}
+
+const server = new ApolloServer({ typeDefs, resolvers });
+
+server.listen().then(({ url }) => {
+  console.log(`🚀 Server ready at ${url}`);
+})
+```
