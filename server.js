@@ -87,14 +87,21 @@ const resolvers = {
   },
   Mutation: {
     postTweet(_,{text,userId}){
-    //🛑 두번째 인자 args를 사용하기 위해서 반드시 첫번째 인자 root에 뭔가 적어줘야하며,
-    //이렇게 root를 사용하지 않을 경우 그냥 _로 적기도한다.
-      const newTweet = {
-        id:tweets.length + 1,
-        text,
-      };
-      tweets.push(newTweet);
-      return newTweet;
+      /*
+      💪🏻 코드챌린지
+      트윗 생성 전에 user 데이터베이스에 userId에 해당하는 유저가 존재하는지 체크 후, 없다면 에러를 띄우거나 트윗을 생성하지 않도록 하기
+      */
+      const check = users.find(user => user.id === userId);
+      if(check){
+        const newTweet = {
+          id:tweets.length + 1,
+          text,
+        };
+        tweets.push(newTweet);
+        return newTweet;
+      }else{
+        return;
+      }      
     },
     deleteTweet(_, {id}){
       const tweet = tweets.find(tweet => tweet.id === id);
