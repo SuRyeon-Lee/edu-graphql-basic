@@ -4,10 +4,12 @@ let tweets = [
   {
     id: "1",
     text: "first one!",
+    userId: "2"
   },
   {
     id: "2",
     text: "second one!",
+    userId: "1"
   },
 ]
 
@@ -32,7 +34,7 @@ const typeDefs = gql`
     lastName: String!
     fullName: String! 
     #full name은 실재 user db에 없다. 😨 gq에 이런 정보가 있을거야 알려줬는데 실재론 없음
-    #이럴떄 리조버레서 해당 정보를 요구하면 에러가 뜬다.
+    #이럴떄 리조버에서 해당 정보를 요구하면 에러가 뜬다.
     #💡이때가 바로 dynamic field가 필요할 때!
   }
   type Tweet {
@@ -121,7 +123,11 @@ const resolvers = {
   User의 fullName을 위한 resolver가 있음을 인식해서 에러없이 결과를 보여준다.
   */
   User: {
+    firstName({firstName}){
+      return firstName;
+    },
     fullName({firstName, lastName}){ //fullName(root)로 🌲여기서 root를 가져오면 fullName을 호출하는 User를 보게 된다. 
+      //즉, root는 return 되고 있는 boject의 data를 준다.
       console.log("fullName called")
       /*콘솔을 통해 Query의 allUsers 리조버가 실행되면 
       연달아 Type Query 리조버가 실행된 것을 확인할 수 있다.*/
@@ -141,6 +147,26 @@ const resolvers = {
       
       */
       return `${firstName} ${lastName}` //root에서 필요한 firstName, lastName을 인자로 받아올 수 있다.
+    }
+  },
+  // join과 비슷한 기능을 resolver에서 구현
+  // tweet db의 userId 에 연결된 아이디로 user db에서 동일 ID 찾아서 반환해준다.
+  //query Query($tweetId: ID!) {
+  // tweet(id: "$tweetId") {
+  //   text
+  //   id
+  //   author {
+  //     fullName
+  //   }
+  // }
+  // }
+  //위처럼 요청했을 때 author요청에서 해당되는 db 필드가 없으므로 
+  //아래의 type resolver가 실행되고 users에서 해당 Id 값과 동일한 type User를 찾아서 리턴한다.
+  //그럼 또 type User로 가서 fullName도 db도 없어서 또 위의 User의 fullName 리조버를 찾는다.
+  //그리고 마침내 풀네임을 정상적으로 리턴한다.
+  Tweet:{
+    author({userId}){
+      return users.find(user => user.id === userId)
     }
   }
 }
