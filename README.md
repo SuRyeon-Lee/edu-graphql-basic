@@ -405,3 +405,31 @@ server.listen().then(({ url }) => {
   console.log(`🚀 Server ready at ${url}`);
 })
 ```
+
+</br></br>
+
+#### 📝 schema documentation
+* (""")기호로 감싸 explorer 페이지의 schema 텝에 보이게할 주석을 만들 수 있다.
+* 빌트인으로 doc 문서를 깔끔하게 작성할 수 있어서 너무 편리함✨✨
+```js
+const typeDefs = gql`
+  # 📝 여기 주목
+  """
+  Tweet object represents a resource for a Tweet
+  """
+  type Tweet {
+      id: ID!
+      text: String!
+      author: User
+  }
+  type Query {
+    allTweets: [Tweet!]!
+    tweet(id:ID!): Tweet #🔥꼭 argument를 넘겨줘야하며 해당하는게 없을시 null을 받을 수 있다.
+    allUsers: [User!]!
+  }
+`
+
+```
+![스크린샷](./schema%20doc.png)
+* [Altair GraphQl Client](https://altairgraphql.dev/)의 [웹 서비스](https://altair-gql.sirmuel.design/)를 이용하면 어떤 api 문서든 볼 수 있다. 
+![스크린샷](./altair.png)

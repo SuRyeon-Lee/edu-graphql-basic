@@ -32,11 +32,18 @@ const typeDefs = gql`
     id: ID!
     firstName: String!
     lastName: String!
+    """
+    Is the sum of firstName + lastName as a String
+    """
     fullName: String! 
     #full name은 실재 user db에 없다. 😨 gq에 이런 정보가 있을거야 알려줬는데 실재론 없음
     #이럴떄 리조버에서 해당 정보를 요구하면 에러가 뜬다.
     #💡이때가 바로 dynamic field가 필요할 때!
   }
+  # 📝 schema에 설명을 추가할 수 있다!! (explorer에서 schema들어가면 설명까지 보이도록 가능)
+  """
+  Tweet object represents a resource for a Tweet
+  """
   type Tweet {
       id: ID!
       text: String!
@@ -57,6 +64,9 @@ const typeDefs = gql`
   #모든 변화가 일어나는 작업(get을 제외한 다른 작업)들은 mutaion에 넣어야한다.
   type Mutation {
     postTweet(text:String!, userId: ID!): Tweet!
+    """
+    Deletes a Tweet if found, else returns false
+    """
     deleteTweet(id:ID!): Boolean!
   }
 `
