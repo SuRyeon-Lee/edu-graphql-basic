@@ -433,3 +433,75 @@ const typeDefs = gql`
 ![스크린샷](./schema%20doc.png)
 * [Altair GraphQl Client](https://altairgraphql.dev/)의 [웹 서비스](https://altair-gql.sirmuel.design/)를 이용하면 어떤 api 문서든 볼 수 있다. 
 ![스크린샷](./altair.png)
+
+</br></br>
+
+#### 🚛 Migrating from REST to GraphQL 
+아래의 명령어로 node-fetch를 깔고 임포트 시키면 graphql API로 rest API를 감싸서
+마치 graphql 요청응답처럼 보내고 받을 수 있다.
+```bash
+npm install node-fetch
+```
+```js
+import { ApolloServer, gql } from "apollo-server";
+import fetch from "node-fetch";
+
+const typeDefs = gql`
+  type Query {
+    allMovies: [Movie!]!
+    movie(id:String!): Movie
+  }
+  type Movie {
+    id:Int!
+    url:String!
+    imdb_code:String!
+    title:String!
+    title_english:String!
+    title_long:String!
+    slug:String!
+    year:Int!
+    rating:Float!
+    runtime:Float!
+    genres:[String]!
+    summary:String!
+    description_full:String!
+    synopsis:String!
+    yt_trailer_code:String!
+    language:String!
+    background_image:String!
+    background_image_original:String!
+    small_cover_image:String!
+    medium_cover_image:String!
+    large_cover_image:String!
+  }
+  const resolvers = {
+  Query: {
+      allTweets() {
+        return tweets;
+      },
+      tweet(root, {id}){ //💡 tweet(root, args)! 유저가 보낸  인자는 항상 resolver의 두번째 인자에 들어온다!
+        return tweets.find(tweet => tweet.id === id);
+      },
+      allUsers() {
+        console.log("all users called!")
+        return users
+      },
+      allMovies(){
+        return fetch("https://yts.mx/api/v2/list_movies.json")
+        .then(r => r.json())
+        .then(json => json.data.movies);
+      },
+      movie(_, {id}){
+        return fetch(`https://yts.mx/api/v2/movie_details.json?movie_id=$ {id}`)
+        .then(r => r.json())
+        .then(json => json.data.movie);
+      }
+    }
+  }
+  const server = new ApolloServer({ typeDefs, resolvers });
+
+  server.listen().then(({ url }) => {
+    console.log(`🚀 Server ready at ${url}`);
+  })
+`
+```

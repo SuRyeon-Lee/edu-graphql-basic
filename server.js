@@ -1,4 +1,5 @@
 import { ApolloServer, gql } from "apollo-server";
+import fetch from "node-fetch";
 
 let tweets = [
   {
@@ -59,6 +60,9 @@ const typeDefs = gql`
     # 하나의 트윗만 받기위한 필드 tweet을 만들땐, 어떤 유저의 Tweet을 받을지를 argument로 정의해야한다.
     tweet(id:ID!): Tweet #🔥꼭 argument를 넘겨줘야하며 해당하는게 없을시 null을 받을 수 있다.
     allUsers: [User!]!
+
+    allMovies: [Movie!]!
+    movie(id:String!): Movie
   }
   #user가 rest api의 post,delete,create,patch와 같이 데이터를 변경하는 요청을 보낼 수 있도록 하는 경우
   #모든 변화가 일어나는 작업(get을 제외한 다른 작업)들은 mutaion에 넣어야한다.
@@ -68,6 +72,29 @@ const typeDefs = gql`
     Deletes a Tweet if found, else returns false
     """
     deleteTweet(id:ID!): Boolean!
+  }
+  type Movie {
+    id:Int!
+    url:String!
+    imdb_code:String!
+    title:String!
+    title_english:String!
+    title_long:String!
+    slug:String!
+    year:Int!
+    rating:Float!
+    runtime:Float!
+    genres:[String]!
+    summary:String
+    description_full:String!
+    synopsis:String!
+    yt_trailer_code:String!
+    language:String!
+    background_image:String!
+    background_image_original:String!
+    small_cover_image:String!
+    medium_cover_image:String!
+    large_cover_image:String!
   }
 `
 
@@ -93,6 +120,19 @@ const resolvers = {
     allUsers() {
       console.log("all users called!")
       return users
+    },
+    allMovies(){
+      // 내 서버가 다른 서버로 request를 보내고 
+      // 그 서버가 답을 하면, 내 서버가 graph Query에 답을 준것
+      // graphql이 이미 typeDefs에 정의된대로 type을 알고 있으니까 원하는 답이 온것
+      return fetch(`https://yts.mx/api/v2/list_movies.json`)
+      .then(r => r.json())
+      .then(json => json.data.movies);
+    },
+    movie(_, {id}){
+      return fetch(`https://yts.mx/api/v2/movie_details.json?movie_id=${id}`)
+      .then(r => r.json())
+      .then(json => json.data.movie);
     }
   },
   Mutation: {
